@@ -2,7 +2,7 @@ require("dotenv").config(); //token and other values from .env
 const Discord = require("discord.js"); //require the discord.js library
 const client = new Discord.Client(); //create a new client from discord.js
 const config = require("./config.js"); // require the config.js file for variables
-const db = require("quick.db") // require the database using the quick.db library
+const db = require("quick.db"); // require the database using the quick.db library
 
 // Runs when the client successfully logs in
 client.once("ready", async () => {
@@ -13,6 +13,7 @@ client.once("ready", async () => {
 
   // set bot's status to idle
   client.user.setPresence({
+    activity: {type: "LISTENING", name: "to 3PO 🙄"},
     status: "idle",
   });
 
@@ -27,24 +28,12 @@ client.on("message", async (message) => {
   let args = message.content.slice(config.prefix.length).trim().split(/ /g); //create an array with the arguments of the command
   let command = args.shift().toLowerCase(); // set the first argument (the command itself) to the command variable and remove it from the args array
 
-  let disable = db.get("disable") || Date.now(); // check if messages are disabled
-
-  if (!disable <= Date.now()) {
-    //if the messages haven't been disabled
-    // Random number to see if a message will appear
-    let num = getRandom(0, 100);
-    //heh funny number
-    if (num == 69)
-      message.channel.send(
-        config.messages[getRandom(0, config.messages.length - 1)]
-      );
-    // ^ this will send a random message from the messages array in config.js if the random number is 69
-  }
-
   //disable responses for one hour
   if (command == "disable") {
-    db.set("disable", Date.now() + 3600000); // one hour from now
-    message.channel.send("I won't talk anymore for the next hour!");
+    db.set(`${message.channel.id}disable`, Date.now() + 3600000); // one hour from now
+    message.channel.send(
+      "I won't talk anymore in this channel for the next hour!"
+    );
   }
 
   if (command == "enable" && message.author.id == config.ownerID) {
@@ -65,6 +54,29 @@ client.on("message", async (message) => {
     } catch (err) {
       message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
     }
+  }
+
+  if (config.whitelist.includes(message.channel.id)) {
+    console.log("----------------\nNew message: " + message.id);
+    let disable = db.get(`${message.channel.id}disable`); // check if messages are disabled
+    if (!disable) disable = 0;
+
+    console.log(
+      `  - Disabled: ${
+        disable > Date.now() ? `Yes, until ${disable}` : "No"
+      }\n  - Current time: ${Date.now()}`
+    );
+    if (disable > Date.now()) return console.log("Canceled - Disabled");
+    
+      // Random number to see if a message will appear
+      let num = getRandom(0, 50);
+      console.log(`  - Random number: ${num}, Target: 13`);
+      if (num == 13)
+        message.channel.send(
+          config.messages[getRandom(0, config.messages.length - 1)]
+        );
+      // ^ this will send a random message from the messages array in config.js if the random number is 69
+    
   }
 });
 
