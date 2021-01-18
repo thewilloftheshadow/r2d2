@@ -55,7 +55,7 @@ client.on("message", async (message) => {
   if (command == "copy") {
     if(message.member.roles.cache.has(config.modrole) || (message.guild.id == "791037986984820776" && message.member.roles.cache.has("799659106226929714"))) return
     // ^ if member is a mod or (in RWL and has sage role)
-    message.delete() // delete the command
+    message.delete().catch(()=>{}) // delete the command
     let m = await message.channel.messages.fetch(args[0]).catch(()=>{}) // see if there is a message with the ID of the first argument of the command
     if (m) { // if there is a message
       args.shift() // remove the ID from the arguments
