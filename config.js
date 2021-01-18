@@ -5,7 +5,9 @@ module.exports = {
     //messages that can be sent
     "Beep boop",
     "https://media.giphy.com/media/3o7bufPuskODYyUf4I/source.gif",
+    "https://media1.tenor.com/images/5790c0a3bc4d7bcfdb658206f5572d30/tenor.gif",
   ],
+  blacklist: [], //channels that the bot cannot run in
   whitelist: [
     "791037986984820779",
     "791146302180294687",
@@ -29,6 +31,6 @@ module.exports = {
     "791053240945999892",
     "791053283287760896",
     "795878690185019442",
-    "791046776982863884"
+    "791046776982863884",
   ], //channels that the bot can run in
-};
+}
