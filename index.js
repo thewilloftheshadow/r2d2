@@ -45,13 +45,29 @@ client.on("message", async (message) => {
     message.channel.send("Messages have been reenabled")
   }
 
+  /*mod only command to speak as the bot 
+  Two ways to use:
+  ^copy message <- will say "message" as the bot
+  ^copy 19736947697679 message <- will reply to the message with the ID of 19736947697679 with "message"
+  */
+  if (command == "copy" && message.member.roles.cache.has(config.modrole)) {
+    message.delete() // delete the command
+    let m = await message.channel.messages.fetch(args[0]).catch(()=>{}) // see if there is a message with the ID of the first argument of the command
+    if (m) { // if there is a message
+      args.shift() // remove the ID from the arguments
+      m.reply(args.join(" ")) // send the arguments joined with a space
+    } else { // if there isn't a message
+      message.channel.send(args.join(" ")) // send the arguments joined with a space
+    }
+  }
+
   //command to run code from Discord (accessible only to the user with the same ID as ownerID in the config.js)
   if (command == "eval" && message.author.id == config.ownerID) {
     try {
       const code = args.join(" ")
       let evaled = eval(code)
       if (typeof evaled !== "string") evaled = require("util").inspect(evaled)
-      if (message.content.endsWith("1+1;")){
+      if (message.content.endsWith("1+1;")) {
         message.delete()
       } else {
         message.channel.send(evaled, { code: "xl", split: " " })
