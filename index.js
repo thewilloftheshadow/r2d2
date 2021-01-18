@@ -28,8 +28,10 @@ client.once("ready", async () => {
 
 client.on("message", async (message) => {
   if (message.author.bot) return // ignore messages from bots
+  if(!message.content.startsWith(config.prefix)) return
   let args = message.content.slice(config.prefix.length).trim().split(/ /g) //create an array with the arguments of the command
   let command = args.shift().toLowerCase() // set the first argument (the command itself) to the command variable and remove it from the args array
+
 
   //disable responses for one hour
   if (command == "disable") {
@@ -50,7 +52,9 @@ client.on("message", async (message) => {
   ^copy message <- will say "message" as the bot
   ^copy 19736947697679 message <- will reply to the message with the ID of 19736947697679 with "message"
   */
-  if (command == "copy" && message.member.roles.cache.has(config.modrole)) {
+  if (command == "copy") {
+    if(message.member.roles.cache.has(config.modrole) || (message.guild.id == "791037986984820776" && message.member.roles.cache.has("799659106226929714"))) return
+    // ^ if member is a mod or (in RWL and has sage role)
     message.delete() // delete the command
     let m = await message.channel.messages.fetch(args[0]).catch(()=>{}) // see if there is a message with the ID of the first argument of the command
     if (m) { // if there is a message
@@ -76,39 +80,41 @@ client.on("message", async (message) => {
       message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``)
     }
   }
+})
 
+client.on("message", (message) => {
   /*
     This entire chunk below is where the random messages are triggered and the checks for disabling channels for an hour
   */
-  if (
-    (listtype == "white" && config.whitelist.includes(message.channel.id)) || // channel is whitelist and using whitelist
-    (listtype == "black" && !config.blacklist.includes(message.channel.id)) //channel is blacklisted and using blacklist
-  ) {
-    console.log("----------------\nNew message: " + message.id) //Start log block
-    let disable = db.get(`${message.channel.id}disable`) // check if messages are disabled
-    if (!disable) disable = 0 // if channel has never been disabled, set time to 0
+ if (
+  (listtype == "white" && config.whitelist.includes(message.channel.id)) || // channel is whitelist and using whitelist
+  (listtype == "black" && !config.blacklist.includes(message.channel.id)) //channel is blacklisted and using blacklist
+) {
+  console.log("----------------\nNew message: " + message.id) //Start log block
+  let disable = db.get(`${message.channel.id}disable`) // check if messages are disabled
+  if (!disable) disable = 0 // if channel has never been disabled, set time to 0
 
-    /*
-      This next log looks like this:
-        - Disabled: Yes, until 1610922749805 <- time when the bot is undisabled
-        - Current time: 1610919569905 <- this will be the current date
-    */
-    console.log(
-      `  - Disabled: ${
-        disable > Date.now() ? `Yes, until ${disable}` : "No"
-      }\n  - Current time: ${Date.now()}`
+  /*
+    This next log looks like this:
+      - Disabled: Yes, until 1610922749805 <- time when the bot is undisabled
+      - Current time: 1610919569905 <- this will be the current date
+  */
+  console.log(
+    `  - Disabled: ${
+      disable > Date.now() ? `Yes, until ${disable}` : "No"
+    }\n  - Current time: ${Date.now()}`
+  )
+  if (disable > Date.now()) return console.log("Canceled - Disabled")
+
+  // Random number to see if a message will appear
+  let num = getRandom(0, 50)
+  console.log(`  - Random number: ${num}, Target: 13`)
+  if (num == 13)
+    message.channel.send(
+      config.messages[getRandom(0, config.messages.length - 1)]
     )
-    if (disable > Date.now()) return console.log("Canceled - Disabled")
-
-    // Random number to see if a message will appear
-    let num = getRandom(0, 50)
-    console.log(`  - Random number: ${num}, Target: 13`)
-    if (num == 13)
-      message.channel.send(
-        config.messages[getRandom(0, config.messages.length - 1)]
-      )
-    // ^ this will send a random message from the messages array in config.js if the random number is 13
-  }
+  // ^ this will send a random message from the messages array in config.js if the random number is 13
+}
 })
 
 // function to get a random number

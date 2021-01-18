@@ -1,7 +1,7 @@
 module.exports = {
   prefix: "^", //prefix for commands
   ownerID: "439223656200273932", //owner of the bot
-  modrole: "791044221803954188", //moderators of your server
+  modrole: ["791044221803954188", "799659106226929714"], //moderators of your server
   messages: [
     //messages that can be sent
     "Beep boop",
