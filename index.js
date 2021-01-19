@@ -5,7 +5,7 @@ const config = require("./config.js") // require the config.js file for variable
 const db = require("quick.db") // require the database using the quick.db library
 
 // see if we're using a whitelist or a blacklist
-const listtype = config.whitelist.length ? "black" : "white"
+const listtype = config.whitelist.length > 0 ? "white" : "black"
 
 // Runs when the client successfully logs in
 client.once("ready", async () => {
