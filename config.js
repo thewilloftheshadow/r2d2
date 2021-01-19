@@ -7,6 +7,9 @@ module.exports = {
     "Beep boop",
     "https://media.giphy.com/media/3o7bufPuskODYyUf4I/source.gif",
     "https://media1.tenor.com/images/5790c0a3bc4d7bcfdb658206f5572d30/tenor.gif",
+    "https://media1.tenor.com/images/9f0bc23d0d681ff1dddbed10ebb2a4ea/tenor.gif",
+    "https://media1.tenor.com/images/1fc5a35d612e38c76decf560597345ff/tenor.gif",
+    "https://media1.tenor.com/images/2ce1aafe0ce8956f820c2519274c95b1/tenor.gif"
   ],
   blacklist: [], //channels that the bot cannot run in
   whitelist: [
