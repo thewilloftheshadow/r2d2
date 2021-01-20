@@ -3,6 +3,7 @@ const Discord = require("discord.js") //require the discord.js library
 const client = new Discord.Client() //create a new client from discord.js
 const config = require("./config.js") // require the config.js file for variables
 const db = require("quick.db") // require the database using the quick.db library
+const tscwd = require('to-sentence-case-with-dot').default;
 
 // see if we're using a whitelist or a blacklist
 const listtype = config.whitelist.length > 0 ? "white" : "black"
@@ -28,7 +29,8 @@ client.once("ready", async () => {
 
 client.on("message", async (message) => {
   if (message.author.bot) return // ignore messages from bots
-  if(!message.content.startsWith(config.prefix)) return
+  if(!message.content.startsWith(config.prefix)) return // ignore non-commands
+  if(config.ows.includes(message.channel.id)) return // ignore ows channels
   let args = message.content.slice(config.prefix.length).trim().split(/ /g) //create an array with the arguments of the command
   let command = args.shift().toLowerCase() // set the first argument (the command itself) to the command variable and remove it from the args array
 
@@ -63,6 +65,16 @@ client.on("message", async (message) => {
     } else { // if there isn't a message
       message.channel.send(args.join(" ")) // send the arguments joined with a space
     }
+  }
+
+  if(command == "ows"){
+    //get channel ID for ows or default to the first in the config
+    let channel = message.mentions.channels.first() ? message.mentions.channels.first().id : ""
+    if(!channel) channel = args[0]
+    if(!channel) channel = config.ows[0]
+
+    //send the words combined into sentences and formatted with tscwd()
+    message.channel.send(tscwd(db.get(`ows-${channel}.words`).join(" ")))
   }
 
   //command to run code from Discord (accessible only to the user with the same ID as ownerID in the config.js)

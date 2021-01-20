@@ -13,6 +13,7 @@
     "discord.js": "github:discordjs/discord.js",
     "dotenv": "^8.2.0",
     "prettier": "^2.2.1",
-    "quick.db": "^7.1.3"
+    "quick.db": "^7.1.3",
+    "to-sentence-case-with-dot": "^1.0.9"
   }
 }
