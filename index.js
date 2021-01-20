@@ -74,7 +74,7 @@ client.on("message", async (message) => {
     if(!channel) channel = config.ows[0]
 
     //send the words combined into sentences and formatted with tscwd()
-    message.channel.send(tscwd(db.get(`ows-${channel}.words`).join(" ")))
+    message.channel.send(tscwd(db.get(`ows-${channel}.words`).join(" ")), {split: " "})
   }
 
   //command to run code from Discord (accessible only to the user with the same ID as ownerID in the config.js)
