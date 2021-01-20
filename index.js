@@ -90,7 +90,7 @@ client.on("message", (message) => {
   (listtype == "white" && config.whitelist.includes(message.channel.id)) || // channel is whitelist and using whitelist
   (listtype == "black" && !config.blacklist.includes(message.channel.id)) //channel is blacklisted and using blacklist
 ) {
-  console.log("----------------\nNew message: " + message.id) //Start log block
+  console.log("----------------\nRandom message generator: " + message.id) //Start log block
   let disable = db.get(`${message.channel.id}disable`) // check if messages are disabled
   if (!disable) disable = 0 // if channel has never been disabled, set time to 0
 
@@ -115,6 +115,25 @@ client.on("message", (message) => {
     )
   // ^ this will send a random message from the messages array in config.js if the random number is 13
 }
+})
+
+// one word story handler
+client.on("message", (message) => {
+  if(!config.ows.includes(message.channel.id)) return //ignore non-one word story channels
+
+  console.log("----------------\nOne Word Story: " + message.id) //Start log block
+
+  let lastUser = db.get(`ows-${message.channel.id}.lastUser`) // get the ID of the last user to send a word
+  console.log("  - Last user: " + lastUser)
+  console.log("  - This user: " + message.author.id)
+  console.log("  - Word: " + message.content)
+  if(lastUser == message.author.id) return message.delete() // if the last user and new user are the same, delete message
+  
+  let words = message.content.split(/ /g) // split message content by spaces
+  if(words.length > 1) return message.delete() // if there is more than one word, delete message
+
+  db.set(`ows-${message.channel.id}.lastUser`, message.author.id) // save ID of user who successfully sent a message
+  db.push(`ows-${message.channel.id}.words`, message.content)
 })
 
 // function to get a random number

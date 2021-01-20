@@ -1,6 +1,7 @@
 module.exports = {
   prefix: "^", //prefix for commands
   ownerID: "439223656200273932", //owner of the bot
+  ows: ["801252279855611924"], //channels for one word story
   modrole: ["791044221803954188", "799659106226929714"], //moderators of your server
   messages: [
     //messages that can be sent
