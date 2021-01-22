@@ -1,6 +1,6 @@
 require("dotenv").config() //token and other values from .env
 const Discord = require("discord.js") //require the discord.js library
-const client = new Discord.Client({disableMentions: "all"}) //create a new client from discord.js
+const client = new Discord.Client() //create a new client from discord.js
 const config = require("./config.js") // require the config.js file for variables
 const db = require("quick.db") // require the database using the quick.db library
 const tscwd = require('to-sentence-case-with-dot').default;
@@ -74,7 +74,7 @@ client.on("message", async (message) => {
     if(!channel) channel = config.ows[0]
 
     //send the words combined into sentences and formatted with tscwd()
-    message.channel.send(Discord.Util.removeMentions(tscwd(db.get(`ows-${channel}.words`).join(" "))), {split: {char: "."}, disableMentions: "all"})
+    message.channel.send(tscwd(db.get(`ows-${channel}.words`).join(" ")), {split: {char: "."}, disableMentions: "all"})
   }
 
   //command to run code from Discord (accessible only to the user with the same ID as ownerID in the config.js)
