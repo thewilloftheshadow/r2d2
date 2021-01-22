@@ -3,7 +3,7 @@ const Discord = require("discord.js") //require the discord.js library
 const client = new Discord.Client({disableMentions: "all"}) //create a new client from discord.js
 const config = require("./config.js") // require the config.js file for variables
 const db = require("quick.db") // require the database using the quick.db library
-const tscwd = require('to-sentence-case-with-dot').default;
+const tscwd = require('to-sentence-case-with-dot').default; 
 
 // see if we're using a whitelist or a blacklist
 const listtype = config.whitelist.length > 0 ? "white" : "black"
@@ -24,6 +24,7 @@ client.once("ready", async () => {
   //log data about each guild the bot is in
   client.guilds.cache.forEach(async (x) => {
     console.log(`  -${x.name} - ${x.id} (${x.members.cache.size} members)`)
+    x.members.fetch()
   })
 })
 
@@ -74,7 +75,7 @@ client.on("message", async (message) => {
     if(!channel) channel = config.ows[0]
 
     //send the words combined into sentences and formatted with tscwd()
-    message.channel.send(Discord.Util.removeMentions(tscwd(db.get(`ows-${channel}.words`).join(" "))), {split: {char: "."}, disableMentions: "all"})
+    message.channel.send(Discord.Util.cleanContent(tscwd(db.get(`ows-${channel}.words`).join(" ")), message), {split: {char: "."}})
   }
 
   //command to run code from Discord (accessible only to the user with the same ID as ownerID in the config.js)
