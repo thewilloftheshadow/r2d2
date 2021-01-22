@@ -132,6 +132,7 @@ client.on("message", (message) => {
 
 // one word story handler
 client.on("message", (message) => {
+  return; //temp disable one word story
   if(!config.ows.includes(message.channel.id)) return //ignore non-one word story channels
 
   console.log("----------------\nOne Word Story: " + message.id) //Start log block
