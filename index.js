@@ -3,7 +3,6 @@ const Discord = require("discord.js") //require the discord.js library
 const client = new Discord.Client({disableMentions: "all"}) //create a new client from discord.js
 const config = require("./config.js") // require the config.js file for variables
 const db = require("quick.db") // require the database using the quick.db library
-const tscwd = require('to-sentence-case-with-dot').default; 
 
 // see if we're using a whitelist or a blacklist
 const listtype = config.whitelist.length > 0 ? "white" : "black"
@@ -68,16 +67,6 @@ client.on("message", async (message) => {
     }
   }
 
-  if(command == "ows"){
-    //get channel ID for ows or default to the first in the config
-    let channel = message.mentions.channels.first() ? message.mentions.channels.first().id : ""
-    if(!channel) channel = args[0]
-    if(!channel) channel = config.ows[0]
-
-    //send the words combined into sentences and formatted with tscwd()
-    message.channel.send(Discord.Util.cleanContent(tscwd(db.get(`ows-${channel}.words`).join(" ")), message), {split: {char: "."}})
-  }
-
   //command to run code from Discord (accessible only to the user with the same ID as ownerID in the config.js)
   if (command == "eval" && message.author.id == config.ownerID) {
     try {
@@ -97,7 +86,8 @@ client.on("message", async (message) => {
 
 client.on("message", (message) => {
   /*
-    This entire chunk below is where the random messages are triggered and the checks for disabling channels for an hour
+    This entire chunk below is where the random messages are triggered 
+    and where the checks for disabling channels for an hour are
   */
  if (
   (listtype == "white" && config.whitelist.includes(message.channel.id)) || // channel is whitelist and using whitelist
@@ -130,37 +120,12 @@ client.on("message", (message) => {
 }
 })
 
-// one word story handler
-client.on("message", (message) => {
-  return; //temp disable one word story
-  if(!config.ows.includes(message.channel.id)) return //ignore non-one word story channels
-
-  console.log("----------------\nOne Word Story: " + message.id) //Start log block
-
-  let lastUser = db.get(`ows-${message.channel.id}.lastUser`) // get the ID of the last user to send a word
-  console.log("  - Last user: " + lastUser)
-  console.log("  - This user: " + message.author.id)
-  console.log("  - Word: " + message.content)
-  if(lastUser == message.author.id) return message.delete() // if the last user and new user are the same, delete message
-  
-  let words = message.content.split(/ /g) // split message content by spaces
-  if(words.length > 1) return message.delete() // if there is more than one word, delete message
-
-  db.set(`ows-${message.channel.id}.lastUser`, message.author.id) // save ID of user who successfully sent a message
-  db.push(`ows-${message.channel.id}.words`, message.content)
-})
-
 // function to get a random number
 const getRandom = (min, max) => {
   max = max + 1 //max is non inclusive in this function, so this adds one to include the passed max
   min = Math.ceil(min)
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min)) + min
-}
-
-//function to pause for a certain amount of time
-const sleep = async (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 //Login to Discord
