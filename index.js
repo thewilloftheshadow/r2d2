@@ -122,7 +122,6 @@ client.on("message", (message) => {
 
 // function to get a random number
 const getRandom = (min, max) => {
-  max = max + 1 //max is non inclusive in this function, so this adds one to include the passed max
   min = Math.ceil(min)
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min)) + min
